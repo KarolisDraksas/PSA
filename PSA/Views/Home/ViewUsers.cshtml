@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Display Data";
+    string[] TableHeaders = new string[] {"ID", "Email"
+                        ,"First Name"
+                        ,"Last Name"
+                        ,"Follow user"};
+}
+@using Microsoft.AspNetCore.Identity
+@using PSA.Areas.Identity.Data
+
+@inject SignInManager<PSAUser> SignInManager
+@inject UserManager<PSAUser> UserManager
+<p>All users info page</p>
+<div class="table">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                @{
+                    foreach (var head in TableHeaders)
+                    {
+                        <th>
+                            @head
+                        </th>
+                    }
+                }
+            </tr>
+        </thead>
+
+        <tbody>
+            @{
+                if (Model != null)
+                {
+                    foreach (var Data in Model)
+                    {
+                        if (Data.ID != @UserManager.GetUserId(User))
+                        {
+                            <tr>
+                                <td>@Data.ID</td>
+                                <td>@Data.Email</td>
+                                <td>@Data.FirstName</td>
+                                <td>@Data.LastName</td>
+                                <td>
+                                    <!--<input type="button" value="follow" name="AddFollowers" class="btn btn-info" onclick='window.location.href = "Url.Action("AddFollower", "Home")";' /> --->
+                                    <!--   <input type="button" value="follow" name="AddFollowers" id="AddFollowers" class="btn btn-info" onclick='window.location.href = "Url.Action("AddFollower", "Home")";' /> --->
+                                    <!---using (Html.BeginForm("ViewUsers", "Home", FormMethod.Post))
+                            {
+                                <input type="submit" value="Submit" />
+                            }-->
+                                    <input type="button" value="follow" name="AddFollowers" id="AddFollowers" class="btn btn-info" onclick='window.location.href = "@Url.Action("ViewUsers", "Home", new { ID = Data.ID+ " "+@UserManager.GetUserId(User)})";' />
+                                    <!-- <script>window.history.replaceState("object or string", "Title", "/" + "ViewUsers")</script>-->
+                                    @if (ViewBag.Message != null)
+                                    {
+                                        <script type="text/javascript">
+                                        window.onload = function () {
+                                            alert("@ViewBag.Message");
+
+                                        };
+                                        /*UrlAction("ViewUsers", "Home");*/
+                                       /* window.history.replaceState("object or string", "Title", "/" + "Home/ViewUsers")*/
+                                       /* window.location = window.location.pathname;
+                                        window.location.reload();*/
+                                        </script>
+
+                                    }
+                                    <!-- Html.Action("ViewUsers2")-->
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+            }
+        </tbody>
+    </table>
+</div>

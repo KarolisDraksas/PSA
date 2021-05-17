@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Display Data";
+    string[] TableHeaders = new string[] {"ID", "Email"
+                        ,"First Name"
+                        ,"Last Name"};
+}
+@using Microsoft.AspNetCore.Identity
+@using PSA.Areas.Identity.Data
+
+@inject SignInManager<PSAUser> SignInManager
+@inject UserManager<PSAUser> UserManager
+<p>All users info page</p>
+<div class="table">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                @{
+                    foreach (var head in TableHeaders)
+                    {
+                        <th>
+                            @head
+                        </th>
+                    }
+                }
+            </tr>
+        </thead>
+
+        <tbody>
+            @{
+                if (Model != null)
+                {
+                    foreach (var Data in Model)
+                    {
+                        if (Data.ID != @UserManager.GetUserId(User))
+                        {
+                            <tr>
+                                <td>@Data.ID</td>
+                                <td>@Data.Email</td>
+                                <td>@Data.FirstName</td>
+                                <td>@Data.LastName</td>
+                            </tr>
+                        }
+                    }
+                }
+            }
+        </tbody>
+    </table>
+</div>

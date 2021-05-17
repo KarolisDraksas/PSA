@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "Display Data";
+    string[] TableHeaders = new string[] {"Email"
+                        ,"First Name"
+                        ,"Last Name"};
+}
+
+@using Microsoft.AspNetCore.Identity
+@using PSA.Areas.Identity.Data
+
+@inject SignInManager<PSAUser> SignInManager
+@inject UserManager<PSAUser> UserManager
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <center>
+                                <h4>Profile Details</h4>
+                            </center>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <center>
+                                <img src="~/dfprofile.jpg" alt="Sample photo" width="100px" />
+                            </center>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                            <div class="col-md-4">
+                                <label>Email:</label>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        @UserManager.GetUserName(User)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>First Name:</label>
+                                <div class="form-group">
+                                    @{
+                                        if (Model != null)
+                                        {
+                                            foreach (var Data in Model)
+                                            {
+                                                if (Data.Email == UserManager.GetUserName(User))
+                                                {
+                                                    <tr>
+                                                        <td>@Data.FirstName</td>
+                                                    </tr>
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+                           
+                        
+                                <div class="col-md-4">
+                                    <label>Last Name:</label>
+                                    <div class="form-group">
+                                        @{
+                                            if (Model != null)
+                                            {
+                                                foreach (var Data in Model)
+                                                {
+                                                    if (Data.Email == UserManager.GetUserName(User))
+                                                    {
+                                                        <tr>
+                                                            <td>@Data.LastName</td>
+                                                        </tr>
+                                                    }
+
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+            </div>
+            <br>
+        </div>
+    </div>
+</div>
+</div>
+
+
