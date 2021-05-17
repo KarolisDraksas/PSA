@@ -208,9 +208,8 @@ namespace PSA.Controllers
            return View(profiles);
            
         }
-       
 
-        public IActionResult ViewFollowedUsers()
+        private void FetchFollowingData()
         {
             if (followedProfiles.Count > 0)
             {
@@ -271,20 +270,35 @@ namespace PSA.Controllers
 
                 throw ex;
             }
-           
-            foreach(Profile p in followedProfiles)
+
+            if (ll.Count > 0)
             {
-                foreach(following f in followed)
+                ll.Clear();
+            }
+            foreach (Profile p in followedProfiles)
+            {
+                foreach (following f in followed)
                 {
                     if (f.followedUserID.Trim() == p.ID.Trim())
                     {
                         ll.Add(p);
                         break;
-                    }                
+                    }
                 }
             }
+        }
+       
 
-            /*return View(ll);*/
+        public IActionResult ViewFollowedUsers()
+        {
+            FetchFollowingData();
+            return View(ll);
+        }
+
+        [HttpGet("ViewFollowedUsers/{ID}")]
+        public IActionResult ViewFollowedUsers(string ID)
+        {
+            FetchFollowingData();
             return View(ll);
         }
         /*public IActionResult ViewUsers2()

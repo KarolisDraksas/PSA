@@ -2,7 +2,8 @@
     ViewData["Title"] = "Display Data";
     string[] TableHeaders = new string[] {"ID", "Email"
                         ,"First Name"
-                        ,"Last Name"};
+                        ,"Last Name"
+                        ,"Unfollow user"};
 }
 @using Microsoft.AspNetCore.Identity
 @using PSA.Areas.Identity.Data
@@ -38,6 +39,9 @@
                                 <td>@Data.Email</td>
                                 <td>@Data.FirstName</td>
                                 <td>@Data.LastName</td>
+                                <td>
+                                    <input type="button" value="unfollow" class="btn btn-info" onclick='window.location.href = "@Url.Action("ViewFollowedUsers", "Home", new { ID = Data.ID})";' />
+                                </td>
                             </tr>
                         }
                     }
