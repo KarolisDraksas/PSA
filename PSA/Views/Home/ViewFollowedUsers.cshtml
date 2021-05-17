@@ -46,6 +46,20 @@
                         }
                     }
                 }
+                @if (ViewBag.Message != null)
+                {
+                    <script type="text/javascript">
+                                        window.onload = function () {
+                                            alert("@ViewBag.Message");
+
+                                        };
+                                        /*UrlAction("ViewUsers", "Home");*/
+                                       /* window.history.replaceState("object or string", "Title", "/" + "Home/ViewUsers")*/
+                                       /* window.location = window.location.pathname;
+                                        window.location.reload();*/
+                    </script>
+
+                }
             }
         </tbody>
     </table>

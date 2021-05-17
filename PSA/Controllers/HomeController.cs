@@ -298,7 +298,6 @@ namespace PSA.Controllers
         [HttpGet("ViewFollowedUsers/{ID}")]
         public IActionResult ViewFollowedUsers(string ID)
         {
-            FetchFollowingData();
             try
             {
              string[] pp = ID.Split();
@@ -311,11 +310,15 @@ namespace PSA.Controllers
               com.CommandText = "DELETE FROM [PSA].[dbo].[Followings2] WHERE [followedUserID] = @ID1 AND [userID] = @ID2 ";
               com.ExecuteNonQuery();
               con.Close();
+              ViewBag.Message = string.Format("User unfollowed");
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+            ViewBag.Message = string.Format("User unfollowed");
+
+            FetchFollowingData();
             return View(ll);
         }
         /*public IActionResult ViewUsers2()
