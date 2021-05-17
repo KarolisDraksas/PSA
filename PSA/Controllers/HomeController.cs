@@ -299,6 +299,23 @@ namespace PSA.Controllers
         public IActionResult ViewFollowedUsers(string ID)
         {
             FetchFollowingData();
+            try
+            {
+             string[] pp = ID.Split();
+             string id1 = pp[0];
+             string id2 = pp[1];
+              con.Open();
+              com.Connection = con;
+              com.Parameters.AddWithValue("@ID1", id1);
+              com.Parameters.AddWithValue("@ID2", id2);
+              com.CommandText = "DELETE FROM [PSA].[dbo].[Followings2] WHERE [followedUserID] = @ID1 AND [userID] = @ID2 ";
+              com.ExecuteNonQuery();
+              con.Close();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             return View(ll);
         }
         /*public IActionResult ViewUsers2()
