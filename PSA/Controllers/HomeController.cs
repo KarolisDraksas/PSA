@@ -26,6 +26,8 @@ namespace PSA.Controllers
         List<Profile> followedProfiles = new List<Profile>();
         List<following> followed = new List<following>();
         List<Profile> ll = new List<Profile>();
+        List<Shelve> shelve = new List<Shelve>();
+        List<Profile> recomendationProfiles = new List<Profile>();
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
@@ -115,10 +117,137 @@ namespace PSA.Controllers
             return View(profiles);
         }
 
+        private void FetchRecomendationData()
+        {
+            if (shelve.Count > 0)
+            {
+                shelve.Clear();
+            }
+            try
+            {
+                con.Open();
+                com.Connection = con;
+                com.CommandText = "SELECT TOP (1000) [userID],[Author],[Genre] FROM [PSA].[dbo].[Shelve]";
+                dr = com.ExecuteReader();
+                while (dr.Read())
+                {
+                    shelve.Add(new Shelve()
+                    {
+                        userID = dr["userID"].ToString()
+                    ,
+                        Author = dr["Author"].ToString()
+                    ,
+                        Genre = dr["Genre"].ToString()
+                    });
+                }
+                con.Close();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            Dictionary<string, int> recomendationsAuthor = new Dictionary<string, int>();
+            Dictionary<string, int> recomendationsGenre = new Dictionary<string, int>();
+
+            foreach (Shelve s in shelve)
+            {
+                if (!recomendationsAuthor.ContainsKey(s.Author.Trim()))
+                {
+                    recomendationsAuthor.Add(s.Author.Trim(), 1);
+                }
+                else
+                {
+                    recomendationsAuthor[s.Author.Trim()] += 1;
+                }
+
+                if (!recomendationsGenre.ContainsKey(s.Genre.Trim()))
+                {
+                    recomendationsGenre.Add(s.Genre.Trim(), 1);
+                }
+                else
+                {
+                    recomendationsGenre[s.Genre.Trim()] += 1;
+                }
+            }
+            var orderedAuthor = recomendationsAuthor.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+            List<string> auth = new List<string>();
+            foreach (var item in orderedAuthor)
+            {
+                auth.Add(item.Key.Trim());
+            }
+            var orderedGenre = recomendationsGenre.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+            List<string> gen = new List<string>();
+            foreach (var item in orderedGenre)
+            {
+                gen.Add(item.Key.Trim());
+            }
+            if (recomendationProfiles.Count > 0)
+            {
+                recomendationProfiles.Clear();
+            }
+            foreach (Profile p in profiles)
+            {
+                if (recomendationProfiles.Count >= 6)
+                {
+                    break;
+                }
+                foreach (Shelve s in shelve)
+                {
+                    if (recomendationProfiles.Count >= 6)
+                    {
+                        break;
+                    }
+                    foreach (string a in auth)
+                    {
+                        if (recomendationProfiles.Count >= 6)
+                        {
+                            break;
+                        }
+                        foreach (string b in gen)
+                        {
+                            if (s.Author.Trim() == a)
+                            {
+                                if (s.userID.Trim() == p.ID.Trim())
+                                {
+                                    if (recomendationProfiles.Count < 6)
+                                    {
+                                        if (!recomendationProfiles.Contains(p))
+                                        {
+                                            recomendationProfiles.Add(p);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                            if (s.Genre.Trim() == b)
+                            {
+                                if (s.userID.Trim() == p.ID.Trim())
+                                {
+                                    if (recomendationProfiles.Count < 6)
+                                    {
+                                        if (!recomendationProfiles.Contains(p))
+                                        {
+                                            recomendationProfiles.Add(p);
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         public IActionResult ViewUsers()
         {
             FetchData();
-            return View(profiles);
+            FetchRecomendationData();
+            return View(recomendationProfiles);
+           /* return View(profiles);*/
         }
         [HttpGet("ViewUsers/{ID}")]
         public IActionResult ViewUsers(string ID)
@@ -205,8 +334,9 @@ namespace PSA.Controllers
             /*Url.Action("ViewUsers", "Home");*/
            
            FetchData();
-           return View(profiles);
-           
+           FetchRecomendationData();
+            return View(recomendationProfiles);
+           /*return View(profiles);   */     
         }
 
         private void FetchFollowingData()
